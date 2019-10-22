@@ -1,6 +1,7 @@
 package eh.com.skilltestproject.main;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -33,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     CityAdapter mAdapter;
     CityPresenter presenter;
 
-
+    RecyclerView.LayoutManager layoutManager;
+    boolean rotation = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +48,12 @@ public class MainActivity extends AppCompatActivity {
         checkTowPane();
         setUI();
         mAdapter = new CityAdapter(this,cityList,mTwoPane);
-        //loadCityDataFromAssetsFolder();
 
 
-        new ReadCityJsonFromAssets().execute();
+        if(rotation) {
+            new ReadCityJsonFromAssets().execute();
+        }
 
-        /*
-        presenter = new CityPresenter(this);
-        presenter.loadFile();*/
 
         search();
 
@@ -60,7 +61,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        rotation = false;
+    }
 
     public void loadCityDataFromAssetsFolder()
     {
@@ -77,21 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupRecyclerView(RecyclerView recyclerView)
     {
-         RecyclerView.LayoutManager layoutManager;
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         mAdapter = new CityAdapter(this,cityList,mTwoPane);
         recyclerView.setAdapter(mAdapter);
 
     }
 
-    public void setUpRecyclerView(RecyclerView recyclerView,List<City> cityList)
-    {
-        mAdapter = new CityAdapter(this,cityList,mTwoPane);
-        recyclerView.setAdapter(mAdapter);
-    }
+
 
     public void setUI()
     {
@@ -99,10 +95,7 @@ public class MainActivity extends AppCompatActivity {
         assert recyclerView !=null;
 
         searchView = findViewById(R.id.search);
-
-        RecyclerView.LayoutManager layoutManager;
         layoutManager = new LinearLayoutManager(this);
-
         ((RecyclerView)recyclerView).setLayoutManager(layoutManager);
         ((RecyclerView)recyclerView).setItemAnimator(new DefaultItemAnimator());
         ((RecyclerView)recyclerView).addItemDecoration(new DividerItemDecoration(MainActivity.this, LinearLayoutManager.VERTICAL));
@@ -239,15 +232,6 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-
-                String st="";
-                st = searchView.getQuery().toString();
-                if(!st.equals(""))
-                {
-                    //cityList = mAdapter.getDataFilter(st,constantCityList);
-                    cityList = Utilities.filterCities(constantCityList,st);
-
-                }
             setupRecyclerView((RecyclerView) recyclerView);
 
 
@@ -257,6 +241,5 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 }
