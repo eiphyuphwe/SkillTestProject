@@ -2,6 +2,9 @@ package eh.com.skilltestproject;
 
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +81,13 @@ public class ExampleUnitTest {
         arraylist.add(new City(4,"US","Anaheim",new Coord(0.0,0.0)));
 
         assertFalse((Utilities.sortCountryList(arraylist)).get(0).getName().equals("Sydney"));
+    }
+
+    @Test
+    public void convertingStringToInputStream_thenCorrect()
+            throws IOException {
+        String initialString = "text";
+        InputStream targetStream = new ByteArrayInputStream(initialString.getBytes());
     }
 
 

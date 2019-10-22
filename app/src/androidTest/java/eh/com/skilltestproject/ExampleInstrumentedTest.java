@@ -5,13 +5,15 @@ import android.content.Context;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
+import eh.com.skilltestproject.model.City;
 import eh.com.skilltestproject.utils.Utilities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 
 
 /**
@@ -37,8 +39,16 @@ public class ExampleInstrumentedTest {
         Utilities utilities = new Utilities();
         assertNotNull(utilities.loadDataFromAsset(ctx));
 
+    }
 
-
+    @Test
+    public void readFileAssetsAndGetData() throws Exception
+    {
+        Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Utilities utilities = new Utilities();
+        List<City> cityList = utilities.loadDataFromAsset(ctx);
+        assertEquals(cityList.get(0).getName(),"Hurzuf");
+        assertEquals(cityList.get(0).getCountry(),"UA");
     }
 
 
