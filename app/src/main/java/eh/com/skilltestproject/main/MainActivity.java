@@ -133,13 +133,17 @@ public class MainActivity extends AppCompatActivity implements CityModelView {
 
     @Override
     public void onShowProgress() {
-
-        progressDialog.show();
+        if(progressDialog!=null) {
+            progressDialog.show();
+        }
     }
 
     @Override
     public void onHideProgress() {
-        progressDialog.dismiss();
+
+        if(progressDialog!=null) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -222,5 +226,9 @@ public class MainActivity extends AppCompatActivity implements CityModelView {
     }
 
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        progressDialog.dismiss();
+    }
 }
