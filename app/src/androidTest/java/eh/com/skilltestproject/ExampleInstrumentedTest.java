@@ -14,8 +14,6 @@ import eh.com.skilltestproject.utils.Utilities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -50,6 +48,7 @@ public class ExampleInstrumentedTest {
         assertEquals(cityList.get(0).getName(),"Hurzuf");
         assertEquals(cityList.get(0).getCountry(),"UA");
     }
+
 
 
 

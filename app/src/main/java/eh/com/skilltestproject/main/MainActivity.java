@@ -1,11 +1,15 @@
 package eh.com.skilltestproject.main;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
+import android.widget.FrameLayout;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +24,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import eh.com.skilltestproject.R;
 import eh.com.skilltestproject.adapters.CityAdapter;
+import eh.com.skilltestproject.main.main_model.CityModelView;
 import eh.com.skilltestproject.main.presenter.CityPresenter;
 import eh.com.skilltestproject.model.City;
 import eh.com.skilltestproject.utils.Utilities;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CityModelView {
 
     private boolean mTwoPane;
     Toolbar toolbar;
@@ -37,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView.LayoutManager layoutManager;
     boolean rotation = true;
+    ProgressDialog progressDialog;
+    FrameLayout mapLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,14 +53,10 @@ public class MainActivity extends AppCompatActivity {
         setUpTooolbar();
         setUI();
         checkTowPane();
-        setUI();
         mAdapter = new CityAdapter(this,cityList,mTwoPane);
+        presenter = new CityPresenter(this);
 
-
-        if(rotation) {
-            new ReadCityJsonFromAssets().execute();
-        }
-
+        presenter.loadFile();
 
         search();
 
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         rotation = false;
+
     }
 
     public void loadCityDataFromAssetsFolder()
@@ -100,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         ((RecyclerView)recyclerView).setItemAnimator(new DefaultItemAnimator());
         ((RecyclerView)recyclerView).addItemDecoration(new DividerItemDecoration(MainActivity.this, LinearLayoutManager.VERTICAL));
 
-       // progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
 
     private void setUpTooolbar()
@@ -121,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    @Override
    public void showError(String s)
    {
        AlertDialog.Builder builder;
@@ -136,7 +142,28 @@ public class MainActivity extends AppCompatActivity {
                });
    }
 
+    @Override
+    public void onShowProgress() {
 
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+    }
+
+    @Override
+    public void onHideProgress() {
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void setUpRecyclerView(List<City> cityList) {
+
+        this.cityList = cityList;
+        constantCityList = cityList;
+        mAdapter = new CityAdapter(this,cityList,mTwoPane);
+        ((RecyclerView)recyclerView).setAdapter(mAdapter);
+    }
+
+    @Override
     public void showOutOfMemoryException(String e) {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(this);
@@ -241,5 +268,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putSerializable("data", (Serializable) cityList);
+    }
+
+
 
 }

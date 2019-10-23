@@ -13,67 +13,57 @@ import eh.com.skilltestproject.utils.Utilities;
 public class CityPresenter {
 
     public CityModelView mvpView;
+    List<City> cityList;
+
+
 
     public CityPresenter(CityModelView view) {
         this.mvpView = view;
+        cityList = new ArrayList<>();
+
     }
 
     public void loadFile()
     {
         new ReadCityJsonFromAssets().execute();
-      //  showProgress();
-       /* List<City> cityList = new ArrayList<>();
-        try {
-            Utilities utilities = new Utilities();
-            cityList = Utilities.sortCountryList(utilities.loadDataFromAsset((MainActivity) mvpView));
-            mvpView.setUpRecyclerView(cityList);
-            hideProgress();
 
-        }catch (OutOfMemoryError error)
-        {
-            mvpView.showOutOfMemoryException("You Memeory is not enough to use our Liquid App!");
-        }
-        catch (Exception e)
-        {
-            mvpView.showError("Error:"+e.toString());
-        }*/
     }
 
-    public void showProgress()
-    {
+   public void showOutOfMemoryException(String s)
+   {
+    mvpView.showOutOfMemoryException(s);
+   }
 
-        mvpView.onShowProgress();
-    }
-    public void hideProgress()
-    {
-        mvpView.onHideProgress();
-    }
+   public void showException(String e)
+   {
+       mvpView.showError(e);
+   }
 
-    public class ReadCityJsonFromAssets extends AsyncTask<String,String,String>{
+    public class ReadCityJsonFromAssets extends AsyncTask<String,String,String> {
 
-        List<City> cityList = new ArrayList<>();
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgress();
+
+          //  mvpView.onShowProgress();
+
         }
 
         @Override
         protected String doInBackground(String... strings) {
 
-            String s="";
+            String s = "";
             try {
                 Utilities utilities = new Utilities();
                 cityList = Utilities.sortCountryList(utilities.loadDataFromAsset((MainActivity) mvpView));
+                MainActivity.constantCityList = cityList;
 
 
-            }catch (OutOfMemoryError error)
-            {
-                mvpView.showOutOfMemoryException("You Memeory is not enough to use our Liquid App!");
-            }
-            catch (Exception e)
-            {
-                mvpView.showError("Error:"+e.toString());
+            } catch (OutOfMemoryError error) {
+                showOutOfMemoryException("You Memeory is not enough to use our Liquid App!");
+            } catch (Exception e) {
+                showException("Error:" + e.toString());
             }
             return s;
         }
@@ -81,10 +71,18 @@ public class CityPresenter {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
+        //    mvpView.onHideProgress();
+
             mvpView.setUpRecyclerView(cityList);
-            hideProgress();
+
+
         }
     }
-
-
 }
+
+
+
+
+
+
