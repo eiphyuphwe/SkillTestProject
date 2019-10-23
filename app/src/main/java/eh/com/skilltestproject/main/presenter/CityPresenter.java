@@ -8,6 +8,7 @@ import java.util.List;
 import eh.com.skilltestproject.main.MainActivity;
 import eh.com.skilltestproject.main.main_model.CityModelView;
 import eh.com.skilltestproject.model.City;
+import eh.com.skilltestproject.model.SingletonClass;
 import eh.com.skilltestproject.utils.Utilities;
 
 public class CityPresenter {
@@ -46,7 +47,7 @@ public class CityPresenter {
         protected void onPreExecute() {
             super.onPreExecute();
 
-          //  mvpView.onShowProgress();
+            mvpView.onShowProgress();
 
         }
 
@@ -57,7 +58,8 @@ public class CityPresenter {
             try {
                 Utilities utilities = new Utilities();
                 cityList = Utilities.sortCountryList(utilities.loadDataFromAsset((MainActivity) mvpView));
-                MainActivity.constantCityList = cityList;
+               // MainActivity.constantCityList = cityList;
+                SingletonClass.getInstance().setCityList(cityList);
 
 
             } catch (OutOfMemoryError error) {
@@ -72,7 +74,8 @@ public class CityPresenter {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-        //    mvpView.onHideProgress();
+            mvpView.onHideProgress();
+
 
             mvpView.setUpRecyclerView(cityList);
 
