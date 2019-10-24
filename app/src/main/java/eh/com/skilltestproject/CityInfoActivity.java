@@ -32,9 +32,11 @@ public class CityInfoActivity extends AppCompatActivity {
                     getIntent().getStringExtra(MapFragment.ARG_POSITION));
             city = (City) getIntent().getSerializableExtra(MapFragment.ARG_CITY);
             args.putSerializable(MapFragment.ARG_CITY,(Serializable) city);
-            txtName.setText(city.getName()+" ,"+city.getCountry());
-            txtLat.setText("Latitude : "+city.getCoord().getLat());
-            txtLong.setText("Longitude : "+city.getCoord().getLon());
+            if(city!=null) {
+                txtName.setText(city.getName() + " ," + city.getCountry());
+                txtLat.setText("Latitude : " + city.getCoord().getLat());
+                txtLong.setText("Longitude : " + city.getCoord().getLon());
+            }
 
 
         }

@@ -1,5 +1,6 @@
 package eh.com.skilltestproject;
 
+import android.content.Intent;
 import android.view.View;
 
 import org.hamcrest.Description;
@@ -11,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -18,6 +21,8 @@ import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 import eh.com.skilltestproject.main.MainActivity;
+import eh.com.skilltestproject.model.City;
+import eh.com.skilltestproject.model.Coord;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -63,13 +68,20 @@ public class MainActivityTest {
     }
 
 
-   /* @Test
+   @Test
     public void testCaseRecyclerItemClickIntent()
     {
-        onView(ViewMatchers.withId(R.id.item_list))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(2,click()))
-                .check(matches(ViewMatchers.withId(R.id.activity_map)));
-    }*/
+        City city = new City();
+        city.set_id(1);
+        city.setName("AA");
+        city.setCountry("Test");
+        city.setCoord(new Coord(1,1));
+        Intent intent = new Intent();
+        intent.putExtra("item_city",city);
+        activityTestRule.launchActivity(intent);
+
+        onView(withId(R.id.item_list)).perform(RecyclerViewActions.actionOnItemAtPosition(2,MyViewAction.clickChildViewWithId(R.id.txtMoreInfo)));
+    }
 
     public Matcher<View> withViewAtPosition(final int position,final Matcher<View> itemMatcher)
     {
@@ -91,6 +103,31 @@ public class MainActivityTest {
 
 
 
+        public static class MyViewAction{
+
+            public static ViewAction clickChildViewWithId(final int id)
+            {
+                return new ViewAction() {
+                    @Override
+                    public Matcher<View> getConstraints() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return null;
+                    }
+
+                    @Override
+                    public void perform(UiController uiController, View view) {
+
+                        View v = view.findViewById(id);
+                        v.performClick();
+
+                    }
+                };
+            }
+        }
 
 
 }
